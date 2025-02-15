@@ -1,0 +1,10 @@
+# Ignore virtual environments
+venv/
+.venv/
+env/
+
+# Ignore environment variables
+.env
+
+# Ignore excel files
+Excel_file/

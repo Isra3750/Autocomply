@@ -6,11 +6,12 @@ import spacy
 df_main = pd.read_excel('Excel_file/Main.xlsx')
 df_compare = pd.read_excel('Excel_file/Compare.xlsx')
 
-# Create spacy nlp object -> load en_core_web_md (small model), en_core_web_lg (large model)
-nlp = spacy.load("en_core_web_trf")
+# Create spacy nlp object
+# load en_core_web_md (small model), en_core_web_lg (large model), en_core_web_trf (largest)
+nlp = spacy.load("en_core_web_lg")
 
 # Create similarity function
-def find_match(statement, main_df, threshold = 0):
+def find_match(statement, main_df, threshold=0.5):
     """
     Find if statement string is located in main_df and return statement else return none
     Args:
@@ -62,4 +63,4 @@ output_df = pd.DataFrame(Result)
 print(output_df)
 
 # Step 4: Save to result excel output file
-#output_df.to_excel('Excel_file/Result.xlsx', index=False)
+output_df.to_excel('Excel_file/Result.xlsx', index=False)

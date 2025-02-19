@@ -1,6 +1,6 @@
 # First, import the required lib
 import pandas as pd
-import spacy
+from sentence_transformers import SentenceTransformer, util
 
 # Step 1: import the two excel file - input file and reference file
 df_main = pd.read_excel('Excel_file/Main.xlsx')
@@ -8,30 +8,38 @@ df_compare = pd.read_excel('Excel_file/Compare.xlsx')
 
 # Create spacy nlp object
 # load en_core_web_md (small model), en_core_web_lg (large model), en_core_web_trf (largest)
-nlp = spacy.load("en_core_web_lg")
+# pip uninstall en-core-web-lg
+#nlp = spacy.load("en_core_web_lg")
+
+# Import thai compatable model
+model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
 # Create similarity function
-def find_match(statement, main_df, threshold=0.5):
+def find_match(statement, main_df, threshold=0.2):
     """
-    Find if statement string is located in main_df and return statement else return none
+    Finds the best match for 'statement' within 'main_df' using sentence-transformers semantic similarity.
+
     Args:
         statement: str
         main_df: xlsx file
     Returns:
         tuple (document reference, matched statement, similarity score)
     """
-    # Process the input statement into a spacy doc
-    doc_input = nlp(statement)
+    # Encode the input statement once
+    embedding_input = model.encode(statement, convert_to_tensor=True)
 
     # Find Best Match -> Score (debugging), Document (actual use), Statement (debugging)
     best_score = 0
     best_document = None
     best_statement = None
     for _, row in main_df.iterrows(): # iterrow output a tuple (index, row)
-        # Process the statement into a spacy doc
-        doc_main = nlp(row['Statement'])
-        # Calculate similarity
-        score = doc_input.similarity(doc_main)
+        # Encode each statement once
+        embedding_main = model.encode(row['Statement'], convert_to_tensor=True)
+        
+        # Calculate cos similarity
+        score_tensor = util.pytorch_cos_sim(embedding_input, embedding_main)
+        score = score_tensor.item()
+
         # Update best match
         if score > best_score:
             best_score = score
@@ -46,7 +54,7 @@ def find_match(statement, main_df, threshold=0.5):
 Result = []
 for _ , row in df_compare.iterrows():
     # Use function to find the best match
-    document, statement, score = find_match(row['Statement'], df_main)
+    document, statement, score = find_match(row['Statement'], df_main, threshold=0.2)
 
     # If not none, then append to result
     if document is not None:

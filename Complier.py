@@ -6,46 +6,44 @@ from sentence_transformers import SentenceTransformer, util
 df_main = pd.read_excel('Excel_file/Main.xlsx')
 df_compare = pd.read_excel('Excel_file/Compare.xlsx')
 
-# Create spacy nlp object
-# load en_core_web_md (small model), en_core_web_lg (large model), en_core_web_trf (largest)
-# pip uninstall en-core-web-lg
-#nlp = spacy.load("en_core_web_lg")
-
-# Import thai compatable model
+# Import thai compatible model
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-# Create similarity function
+# Encode all statements from Main.xlsx as a single batch
+main_statements = df_main['Statement'].tolist()
+main_embeddings = model.encode(main_statements, convert_to_tensor=True)
+
+# Create similarity function - single batch variant
 def find_match(statement, main_df, threshold=0.2):
     """
     Finds the best match for 'statement' within 'main_df' using sentence-transformers semantic similarity.
 
     Args:
-        statement: str
-        main_df: xlsx file
+        statement (str): The statement from df_compare to match against df_main.
+        main_df (pd.DataFrame): DataFrame containing 'Statement' and 'Document' columns.
+        threshold (float): Minimum similarity score required to consider a match valid.
+
     Returns:
-        tuple (document reference, matched statement, similarity score)
+        tuple: (best_document, best_statement, best_score)
+            - best_document: The matching 'Document' from df_main
+            - best_statement: The matched statement from df_main
+            - best_score: The highest cosine similarity score found
     """
     # Encode the input statement once
     embedding_input = model.encode(statement, convert_to_tensor=True)
 
-    # Find Best Match -> Score (debugging), Document (actual use), Statement (debugging)
-    best_score = 0
-    best_document = None
-    best_statement = None
-    for _, row in main_df.iterrows(): # iterrow output a tuple (index, row)
-        # Encode each statement once
-        embedding_main = model.encode(row['Statement'], convert_to_tensor=True)
-        
-        # Calculate cos similarity
-        score_tensor = util.pytorch_cos_sim(embedding_input, embedding_main)
-        score = score_tensor.item()
+    # Compute similarity to all main embeddings at once (shape: (1, n_main))
+    similarity_scores = util.pytorch_cos_sim(embedding_input, main_embeddings)[0]
+    # Get the best score and its index
+    best_score, best_idx = similarity_scores.max(dim=0)
+    best_score = best_score.item()
+    best_idx = best_idx.item()
 
-        # Update best match
-        if score > best_score:
-            best_score = score
-            best_document = row['Document']
-            best_statement = row['Statement']
+    # Get the best match
     if best_score >= threshold:
+        # Retrieve the corresponding row from df_main
+        best_document = main_df.iloc[best_idx]['Document']  # Adjust column name if needed
+        best_statement = main_df.iloc[best_idx]['Statement']
         return best_document, best_statement, best_score
     else:
         return None, None, best_score
@@ -71,4 +69,4 @@ output_df = pd.DataFrame(Result)
 print(output_df)
 
 # Step 4: Save to result excel output file
-output_df.to_excel('Excel_file/Result.xlsx', index=False)
+#output_df.to_excel('Excel_file/Result.xlsx', index=False)

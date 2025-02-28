@@ -1,0 +1,21 @@
+
+body {
+    margin: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+form {
+    background-color: hsl(300, 76%, 72%);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+input[type="file"] {
+    margin: 10px;
+    background-color: aliceblue;
+    padding: 5px;
+}

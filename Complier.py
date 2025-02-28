@@ -1,6 +1,8 @@
 # Import the required lib
 import pandas as pd # for data manipulation
-from sentence_transformers import SentenceTransformer, util # for semantic similarity
+
+# Sentence Transformers enables the transformation of sentences into vector spaces
+from sentence_transformers import SentenceTransformer, util # util provides helper function for embeddings such as the function pytorch_cos_sim to compute cosine similarity
 from tqdm import tqdm # for progress bar
 import time # for total time
 
@@ -38,15 +40,15 @@ def find_match(statement, main_df, threshold=0.2):
     embedding_input = model.encode(statement, convert_to_tensor=True)
 
     # Compute similarity to all main embeddings at once (shape: (1, n_main))
-    similarity_scores = util.pytorch_cos_sim(embedding_input, main_embeddings)[0]
+    similarity_scores = util.pytorch_cos_sim(embedding_input, main_embeddings)[0] # [0] extracts the first row from 2D tensor, this is similarity score for each statement in main_df
     # Get the best score and its index
-    best_score, best_idx = similarity_scores.max(dim=0) # This will return the highest similarity score and its index1
-    best_score = best_score.item()
-    best_idx = best_idx.item()
+    best_score, best_idx = similarity_scores.max(dim=0) # This will get the highest similarity score from the 1D tensor and its index, dim = 0 means row
+    best_score = best_score.item() # convert pytorch into float, Ex. 0.95
+    best_idx = best_idx.item() # convert pytorch into float, Ex. 3
 
-    # Get the best match
+    # Threshold checking, return none if below threshold, which will skipped the append later
     if best_score >= threshold:
-        # Retrieve the corresponding row from df_main
+        # Retrieve the corresponding row from df_main with the best index from before
         best_document = main_df.iloc[best_idx]['Document']  # Adjust column name if needed
         best_statement = main_df.iloc[best_idx]['Statement']
         folder_location = main_df.iloc[best_idx]['Folder location']

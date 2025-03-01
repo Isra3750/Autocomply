@@ -5,6 +5,8 @@ import pandas as pd # for data manipulation
 from sentence_transformers import SentenceTransformer, util # util provides helper function for embeddings such as the function pytorch_cos_sim to compute cosine similarity
 from tqdm import tqdm # for progress bar
 import time # for total time
+import pickle # for caching main embeddings
+import os
 
 # Import the two excel file - input file and reference file
 df_main = pd.read_excel('Excel_file/Main.xlsx')
@@ -16,9 +18,26 @@ start_time = time.time()
 # Import thai compatible model
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-# Encode all statements from Main.xlsx as a single batch
-main_statements = df_main['Statement'].tolist()
-main_embeddings = model.encode(main_statements, convert_to_tensor=True, show_progress_bar=True)
+# Cache file for main embeddings
+cache_file = 'main_embeddings.pkl'
+
+# Use pickle to cache main file embeddings - load if already created, create if not
+# Note: When excel file is changed, the embeddings will need to be re-created, delete the cache file (main_embeddings.pkl)
+if os.path.exists(cache_file):
+    with open(cache_file, 'rb') as f:
+        main_embeddings = pickle.load(f)
+    print("Loaded cache file for main embeddings!")
+else:
+    # Encode all statements from Main.xlsx as a single batch
+    print("Start embedding main statements...")
+    main_statements = df_main['Statement'].tolist()
+    main_embeddings = model.encode(main_statements, convert_to_tensor=True, show_progress_bar=True)
+
+    # Cache the embeddings
+    with open(cache_file, 'wb') as f:
+        pickle.dump(main_embeddings, f)
+    
+    print("Created cache file for main embeddings!")
 
 # Create similarity function - single batch variant
 def find_match(statement, main_df, threshold=0.2):

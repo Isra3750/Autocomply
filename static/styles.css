@@ -41,7 +41,7 @@ p.subtitle2 {
     justify-content: center;
 }
 
-.drop-zone {
+#drop_zone {
     width: 600px;
     height: 200px;
     border: 2px dashed #ccc;

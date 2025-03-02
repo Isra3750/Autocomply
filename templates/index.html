@@ -11,8 +11,13 @@
       <p class = "subtitle2">Upload Excel file, the file should be in the format of TOR, base on the provided template.</p>
    </section>
    <div class="container">
-      <div class="drop-zone">
-         <p>Drop your file here or click to upload your xlsx file</p>
+      <!-- Attach multiple drag events to this div -->
+      <div id="drop_zone"
+         ondrop="dropHandler(event);"
+         ondragover="dragOverHandler(event);"
+         ondragenter="dragEnterHandler(event);"
+         ondragleave="dragLeaveHandler(event);">
+      <p>Drop your file here or click to upload your xlsx file</p>
       </div>
    </div>
    <script src="static/script.js"></script>

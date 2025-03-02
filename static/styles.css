@@ -8,7 +8,7 @@ body {
 }
 
 /* header styles */
-.title {;
+.title {
     padding: 25px;
     margin: 50px auto 50px auto; /*Margin is 15px top, 5px bottom, left and right auto*/
     text-align: center;

@@ -1,24 +1,34 @@
 <html>   
 <head>
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>upload the file : GFG</title>
+   <title>Upload the file: GFG</title>
    <link rel="stylesheet" href="static/styles.css">
+   <!-- Include SweetAlert library -->
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>   
 <body>
    <section class="title">
-      <p class = "subtitle1">VSTECS, Oracle, Comply</p>
+      <p class="subtitle1">VSTECS, Oracle, Comply</p>
       <h1>Upload your TOR file to comply</h1>
-      <p class = "subtitle2">Upload Excel file, the file should be in the format of TOR, base on the provided template.</p>
+      <p class="subtitle2">Upload Excel file, the file should be in the format of TOR, based on the provided template.</p>
    </section>
    <div class="container">
-      <!-- Attach multiple drag events to this div -->
+      <!-- The drop zone now also responds to clicks -->
       <div id="drop_zone"
          ondrop="dropHandler(event);"
          ondragover="dragOverHandler(event);"
          ondragenter="dragEnterHandler(event);"
          ondragleave="dragLeaveHandler(event);">
-      <p>Drop your file here or click to upload your xlsx file</p>
+         <p>Drop your file here or click to upload your xlsx file</p>
       </div>
+      <!-- Hidden file input element -->
+      <input type="file" id="fileInput" style="display: none;" accept=".xlsx"/>
+      
+      <!-- File preview area -->
+      <div id="filePreview"></div>
+      
+      <!-- Submit button (initially disabled) -->
+      <button id="submitBtn" disabled>Submit</button>
    </div>
    <script src="static/script.js"></script>
 </body>   

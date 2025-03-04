@@ -1,12 +1,21 @@
-<html> 
-   <head> 
-      <title>Success</title> 
-   </head> 
-   <body> 
-      <p>File uploaded and processed successfully!</p> 
-      <p>Uploaded File Name: {{ name }}</p>
+<html>   
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Download your file</title>
+   <link rel="stylesheet" href="static/styles_ack.css">
+</head>   
+<body>
+   <section class="title">
+      <p class="subtitle1">VSTECS, Oracle, Comply</p>
+      <h1>Download your TOR file!</h1>
+      <p class="subtitle2">From the Excel file, we would get a result file that returns the similarity score along with the matched statement. Please use this as a reference but do recheck for accuracy</p>
+   </section>
+   <div class="container">
+      <p>File uploaded and processed successfully!</p>
       <p>
-         <a href="/download_result">Download Result.xlsx</a>
+         <a href="/download_result">Download File</a>
       </p>
-   </body> 
+   </div>
+   <script src="static/script.js"></script>
+</body>   
 </html>

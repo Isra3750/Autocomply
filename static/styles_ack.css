@@ -39,40 +39,21 @@ p.subtitle2 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
 
-#drop_zone {
     width: 600px;
-    height: 200px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0 auto; /* Center container horizontally */
     border: 2px dashed #ccc;
     border-radius: 5px;
-    /* center the text */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    margin: 20px;
-    cursor: pointer;
+    border-color: #D84040;
 }
 
-/* Spinner container (optional styling) */
-#spinner {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  /* Spinner element styling */
-  .loader {
-    border: 8px solid #f3f3f3;         /* Light grey */
-    border-top: 8px solid #D84040;       /* Blue color for the spinner */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
-  
-  /* Spinner animation */
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+a {
+    text-decoration: none;
+    background-color: #D84040;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}

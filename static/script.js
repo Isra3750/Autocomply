@@ -88,5 +88,20 @@ document.getElementById("submitBtn").addEventListener("click", function() {
     }
 });
 
+// Submit button click event: upload the stored file
+document.getElementById("submitBtn").addEventListener("click", function() {
+  if (selectedFile) {
+      // Show the spinner immediately
+      document.getElementById("spinner").style.display = "block";
+      // Optionally, disable the submit button to prevent multiple clicks
+      document.getElementById("submitBtn").disabled = true;
+
+      // Proceed to upload the file
+      uploadFile(selectedFile);
+  } else {
+      swal("No File Selected", "Please select a file first", "warning");
+  }
+});
+
 
 

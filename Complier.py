@@ -83,7 +83,7 @@ Result = []
 # Loop through each row, tqdm for progress bar
 for _, row in tqdm(df_compare.iterrows(), total=len(df_compare), desc="Processing rows"):
     # Use function to find the best match
-    document, statement, score, location = find_match(row['Statement'], df_main, threshold=0.2)
+    document, statement, score, location = find_match(row['Statement'], df_main, threshold=0.9)
 
     # If not none, then append to result
     if document is not None:
@@ -143,6 +143,15 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
         'value': 0.95,
         'format': green_format
     })
+
+    # Set column width for each column
+    worksheet.set_column('A:A', 8)
+    worksheet.set_column('B:B', 50)
+    worksheet.set_column('C:C', 50)
+    worksheet.set_column('D:D', 60)
+    worksheet.set_column('E:E', 16)
+    worksheet.set_column('F:F', 30)
+
 
 # Get end time and total time taken
 end_time = time.time()

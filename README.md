@@ -24,9 +24,9 @@ This project is a flask-based web application that enable users to upload their 
 
 ## Usage
 
-git clone https://github.com/yourusername/autocomply.git
+git clone https://github.com/Isra3750/Autocomply.git
 
-cd autocomply
+cd Autocomply
 
 python3 -m venv env
 

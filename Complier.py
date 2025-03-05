@@ -16,7 +16,11 @@ df_compare = pd.read_excel('Excel_file/Compare.xlsx')
 start_time = time.time()
 
 # Import thai compatible model
-model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+print("Start loading model...")
+with tqdm(total=1, desc="Loading Model") as pbar:
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+    pbar.update(1)
+print("Model loaded!")
 
 # Cache file for main embeddings
 cache_file = 'main_embeddings.pkl'

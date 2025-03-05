@@ -46,14 +46,18 @@ p.subtitle2 {
     margin: 0 auto; /* Center container horizontally */
     border: 2px dashed #ccc;
     border-radius: 5px;
-    border-color: #D84040;
+    border-color: forestgreen;
 }
 
 a {
     text-decoration: none;
-    background-color: #D84040;
+    background-color: forestgreen;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
     font-weight: bold;
+}
+
+a:hover {
+    background-color: darkgreen;
 }

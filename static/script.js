@@ -31,6 +31,15 @@ function dragLeaveHandler(ev) {
     console.log("File(s) left the drop zone");
 }
 
+// Function to update drop zone after a file is selected
+function updateDropZoneWithIcon(file) {
+  const dropZone = document.getElementById('drop_zone');
+  // Replace the default text with an Excel icon image
+  dropZone.innerHTML = `<img src="static/img/excel_icon.png" alt="Excel File" style="width: 100px;">`;
+  // Add a class to change the border style
+  dropZone.classList.add('file-selected');
+}
+
 function dropHandler(ev) {
     ev.preventDefault();  // Prevent default behavior (e.g., file opening in browser)
     console.log("File(s) dropped");
@@ -55,6 +64,7 @@ function dropHandler(ev) {
             return;
         }
         selectedFile = file;
+        updateDropZoneWithIcon(file);
         document.getElementById('filePreview').innerText = "Selected file: " + file.name;
         document.getElementById('submitBtn').disabled = false;
     }
@@ -74,6 +84,7 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
             return;
         }
         selectedFile = file;
+        updateDropZoneWithIcon(file);
         document.getElementById('filePreview').innerText = "Selected file: " + file.name;
         document.getElementById('submitBtn').disabled = false;
     }

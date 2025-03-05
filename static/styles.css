@@ -55,6 +55,32 @@ p.subtitle2 {
     cursor: pointer;
 }
 
+/* New style for when a file is selected */
+#drop_zone.file-selected {
+    border: 2px solid green;
+}
+
+/* button styling */
+#submitBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #D84040;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#submitBtn:disabled {
+    background-color: #ccc;    /* Gray background */
+    cursor: not-allowed;       /* “No” cursor */
+    opacity: 0.6;              /* Slightly faded look */
+  }
+
+#submitBtn:hover {
+    background-color: #ff0000; /* Red background on hover */
+}
+
 /* Spinner container (optional styling) */
 #spinner {
     margin-top: 20px;

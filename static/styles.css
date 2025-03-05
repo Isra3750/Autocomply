@@ -62,7 +62,7 @@ p.subtitle2 {
 
 /* button styling */
 #submitBtn {
-    margin-top: 10px;
+    margin: 15px 0; /* Margin is 10px top and bottom, 0 left and right */
     padding: 10px 20px;
     background-color: #D84040;
     color: #fff;
@@ -78,7 +78,13 @@ p.subtitle2 {
   }
 
 #submitBtn:hover {
-    background-color: #ff0000; /* Red background on hover */
+    background-color: #d42c2c; /* Red background on hover */
+}
+
+/* selected file text styling */
+#filePreview {
+    font-size: 14px;
+    color: gray;
 }
 
 /* Spinner container (optional styling) */

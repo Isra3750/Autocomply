@@ -1,17 +1,40 @@
-# **TOR comply automation project**
+# **Automated TOR Compliance creation project**
 
-This repo represent a basic implementation of NLP processing for a comparrsion between two excel file
+This project is a flask-based web application that enable users to upload their TOR file (In .xlsx format) and compare it against a template file (pre-loaded) to generate a resulting compliance file. The output is color-coded to reflect the similarity score between input statement and reference statement.
 
-A similarity check will be ran between inputted file and base file to find similarity between TOR points
+## Tech stack
+
+- Python
+- Flask
+- HTML
+- CSS
+- JavaScript
 
 ## Requirements
 
-- Python 3.7+
-- pip install pandas
-- pip install openpyxl
-- pip install spacy
-- python -m spacy download en_core_web_md
+- Refer to the requirements.txt file
+- Not every library is required from requirements.txt file due to some libary being used only in testing
+
+## Features
+
+- Drag and drop file upload with friendly UX/UI
+- Semantic similarity check
+- Color-coded output based on similarity score
+- Downloadable result file
 
 ## Usage
 
-- Run `python Complier.py`
+git clone https://github.com/yourusername/autocomply.git
+cd autocomply
+
+python3 -m venv env
+source env/bin/activate
+
+pip install -r requirements.txt
+python main.py
+
+Navigate to "http://127.0.0.1:5000/" in your browser
+Follow instruction on the browser to input/download your file
+
+## License
+This project is licensed under the MIT License. 

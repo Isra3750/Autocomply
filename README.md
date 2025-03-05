@@ -25,15 +25,19 @@ This project is a flask-based web application that enable users to upload their 
 ## Usage
 
 git clone https://github.com/yourusername/autocomply.git
+
 cd autocomply
 
 python3 -m venv env
+
 source env/bin/activate
 
 pip install -r requirements.txt
+
 python main.py
 
 Navigate to "http://127.0.0.1:5000/" in your browser
+
 Follow instruction on the browser to input/download your file
 
 ## License

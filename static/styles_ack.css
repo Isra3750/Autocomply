@@ -61,3 +61,19 @@ a {
 a:hover {
     background-color: darkgreen;
 }
+
+/* styling button */
+.backhome {
+    margin: 35px auto;
+    display: block;
+    padding: 10px 20px;
+    background-color: #D84040;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.backhome:hover {
+    background-color: #d42c2c; /* Red background on hover */
+}

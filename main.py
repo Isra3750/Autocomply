@@ -42,6 +42,7 @@ def success():
 
         return render_template("Acknowledgement.html", name='Compare.xlsx')
 
+# download result file
 @app.route('/download_result')
 def download_result():
     upload_folder = os.path.join(os.getcwd(), 'Excel_file')

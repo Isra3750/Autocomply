@@ -83,7 +83,7 @@ Result = []
 # Loop through each row, tqdm for progress bar
 for _, row in tqdm(df_compare.iterrows(), total=len(df_compare), desc="Processing rows"):
     # Use function to find the best match
-    document, statement, score, location = find_match(row['Statement'], df_main, threshold=0.9)
+    document, statement, score, location = find_match(row['Statement'], df_main, threshold=0.1)
 
     # If not none, then append to result
     if document is not None:
@@ -100,16 +100,15 @@ for _, row in tqdm(df_compare.iterrows(), total=len(df_compare), desc="Processin
 output_df = pd.DataFrame(Result)
 print(output_df)
 
-# Save to result excel output file, with coloring for similarity score
+# Use pandas to create an Excel file with XlsxWriter module with similarity coloring base on three conditions
 output_file = 'Excel_file/Result.xlsx'
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+    # write a dataframe into an excel file
     output_df.to_excel(writer, sheet_name='Sheet1', index=False)
+
+    # Get the workbook and worksheet object
     workbook = writer.book
     worksheet = writer.sheets['Sheet1']
-    
-    # Format the "Similarity Score" column (assumed to be column E) to display as percentage
-    percentage_format = workbook.add_format({'num_format': '0.00%'})
-    worksheet.set_column('E:E', 18, percentage_format)
     
     # Determine the cell range for the Similarity Score column (row 2 to the last row)
     num_rows = len(output_df)
@@ -148,9 +147,12 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     worksheet.set_column('A:A', 8)
     worksheet.set_column('B:B', 50)
     worksheet.set_column('C:C', 50)
-    worksheet.set_column('D:D', 60)
-    worksheet.set_column('E:E', 16)
+    worksheet.set_column('D:D', 65)
     worksheet.set_column('F:F', 30)
+    
+    # column E format is set to percentage instead, round to 2 decimal point
+    percentage_format = workbook.add_format({'num_format': '0.00%'})
+    worksheet.set_column('E:E', 14, percentage_format)
 
 
 # Get end time and total time taken

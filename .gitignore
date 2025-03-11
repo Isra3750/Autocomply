@@ -10,4 +10,6 @@ env/
 Excel_file/
 
 # Ignore output folder
+# Remove the folder from the index -> git rm -r --cached output 
+# git rm -r --cached output
 output/

@@ -178,6 +178,11 @@ print("\nUpdating PDF annotations based on Result DataFrame...")
 
 # Loop over each row in the result DataFrame
 for index, row in output_df.iterrows():
+    # Skip rows with low similarity scores -> prevent excessive processing
+    if row['Similarity Score'] < 0.8:
+        print(f"Skipping PDF for row {index} due to low similarity score: {row['Similarity Score']:.3f}")
+        continue
+    
     # Retrieve the PDF file name from the 'Related PDF' column
     pdf_name = row['Related PDF']
     # Use Numbers row as the name and content

@@ -8,6 +8,3 @@ env/
 
 # Ignore excel files
 Excel_file/
-
-# Ignore raw documents
-raw_document/

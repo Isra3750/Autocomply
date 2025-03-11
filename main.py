@@ -31,7 +31,7 @@ def success():
 
         # Path to your environment’s python.exe
         # For example: r"C:\Users\USER\Desktop\Autocomply\env\Scripts\python.exe"
-        python_executable = os.path.join(os.getcwd(), "env", "Scripts", "python.exe")
+        python_executable = os.path.join(os.getcwd(), "env", "Scripts", "python.exe") #use .venv if on work laptop
         script_path = os.path.join(os.getcwd(), "Complier.py")
 
         try:

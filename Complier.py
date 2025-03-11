@@ -7,9 +7,15 @@ from tqdm import tqdm # for progress bar
 import time # for total time
 import pickle # for caching main embeddings
 import os
+import fitz
+import shutil
+
+# =====
+# Section 1: Embeddings excel file
+# =====
 
 # Import the two excel file - input file and reference file
-df_main = pd.read_excel('Excel_file/Main.xlsx')
+df_main = pd.read_excel('Excel_file/ODB_Mapped_PDF.xlsx')
 df_compare = pd.read_excel('Excel_file/Compare.xlsx')
 
 # Record start time
@@ -48,6 +54,10 @@ print("Encoding compare statements in batch...")
 compare_statements = df_compare['Statement'].tolist()
 compare_embeddings = model.encode(compare_statements, convert_to_tensor=True, show_progress_bar=True)
 
+# =====
+# Section 2: Compute similarity
+# =====
+
 print("Computing similarity scores in a single pass...")
 # This creates a similarity matrix of shape (len(df_compare), len(df_main))
 similarity_matrix = util.pytorch_cos_sim(compare_embeddings, main_embeddings)
@@ -66,6 +76,7 @@ for i in range(len(compare_statements)):
     if score >= threshold:
         best_document = df_main.iloc[idx]['Document']
         best_statement = df_main.iloc[idx]['Statement']
+        best_PDF = df_main.iloc[idx]['PDF_name']
         folder_location = df_main.iloc[idx]['Folder location']
         Result.append({
             'Number': df_compare.iloc[i]['Number'],
@@ -73,12 +84,17 @@ for i in range(len(compare_statements)):
             'Matched Statement': best_statement,
             'Matched Document Reference': best_document,
             'Similarity Score': score,
+            'Related PDF': best_PDF,
             'Folder location': folder_location
         })
 
 # Print the Dataframe result
 output_df = pd.DataFrame(Result)
 print(output_df)
+
+# =====
+# Section 3: Create and format Excel file
+# =====
 
 # Use pandas to create an Excel file with XlsxWriter module with similarity coloring base on three conditions
 output_file = 'Excel_file/Result.xlsx'
@@ -128,12 +144,70 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     worksheet.set_column('B:B', 50)
     worksheet.set_column('C:C', 50)
     worksheet.set_column('D:D', 65)
-    worksheet.set_column('F:F', 30)
+    worksheet.set_column('F:F', 13)
+    worksheet.set_column('G:G', 22)
     
     # column E format is set to percentage instead, round to 2 decimal point
     percentage_format = workbook.add_format({'num_format': '0.00%'})
     worksheet.set_column('E:E', 14, percentage_format)
 
+# =====
+# Section 4: Find related PDF and adjust annotations
+# =====
+
+# Clear the output folder so that only the new PDFs will be there
+output_dir = 'output'
+if os.path.exists(output_dir):
+    print("Clearing output folder...")
+    for filename in os.listdir(output_dir):
+        file_path = os.path.join(output_dir, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+                print("Unlinking file: " + file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+                print("Removing directory: " + file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}. Reason: {e}")
+else:
+    print("Making output folder...")
+    os.makedirs(output_dir)
+
+print("\nUpdating PDF annotations based on Result DataFrame...")
+
+# Loop over each row in the result DataFrame
+for index, row in output_df.iterrows():
+    # Retrieve the PDF file name from the 'Related PDF' column
+    pdf_name = row['Related PDF']
+    # Use Numbers row as the name and content
+    annotation_content = str(row['Number'])
+    
+    # Build the PDF file path (assuming the name does not include the .pdf extension)
+    pdf_path = f'document/{pdf_name}.pdf' if not pdf_name.lower().endswith('.pdf') else f'document/{pdf_name}'
+    print(f"Opening PDF: {pdf_path} ...")
+    
+    try:
+        doc = fitz.open(pdf_path)
+    except Exception as e:
+        print(f"Failed to open {pdf_path}: {e}")
+        continue
+    
+    # Loop over all pages and update free-text annotations
+    for page in doc:
+        annots = page.annots()
+        if annots:
+            for annot in annots:
+                if "FreeText" in annot.type:
+                    annot.set_info(content=annotation_content, title="Oracle")
+                    annot.update()
+                    print(f"Updated annotation in {pdf_name} to: {annotation_content}")
+    
+    # Save the updated PDF to the output folder with a unique name
+    output_pdf_path = os.path.join(output_dir, f'{annotation_content}.pdf')
+    doc.save(output_pdf_path)
+    doc.close()
+    print(f"Saved updated PDF to: {output_pdf_path}")
 
 # Get end time and total time taken
 end_time = time.time()

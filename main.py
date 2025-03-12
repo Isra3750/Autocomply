@@ -1,5 +1,5 @@
 import os
-import subprocess
+import subprocess # for creating new child process
 from flask import Flask, render_template, request, send_from_directory
 
 app = Flask(__name__)

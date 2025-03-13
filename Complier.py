@@ -229,7 +229,6 @@ def main():
             if not pdf_name.lower().endswith('.pdf'):
                 pdf_name += '.pdf'
 
-            # Build the path from the sheet name, ignoring the 'Folder location' column
             # For ODB sheet -> ODB_document/<pdf_name>, WLS sheet -> WLS_document/<pdf_name>
             pdf_path = os.path.join(f"Documents/{sheet_name}_document", pdf_name)
 

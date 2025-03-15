@@ -34,7 +34,7 @@ def get_or_create_embeddings(df_main_sheet, model, sheet_name):
     return main_embeddings
 
 # ---------------------------------------------------------------------
-# Helper function: process one sheet (ODB or WLS)
+# Helper function: process one sheet (ODB or OMI)
 # ---------------------------------------------------------------------
 def process_sheet(sheet_name, df_main, df_compare, model, writer):
     """
@@ -139,11 +139,10 @@ def process_sheet(sheet_name, df_main, df_compare, model, writer):
 # Main: read both sheets from Mapped_PDF and Compare, process them, update PDFs
 # ---------------------------------------------------------------------
 def main():
-    # Start timer
     start_time = time.time()
 
     # Names of the sheets we want to process
-    sheets = ["ODB", "WLS"]
+    sheets = ["ODB", "OMI", "IBM_DB", "IES", "SAP_DB", "SES"]
 
     # Load the model
     print("Loading SentenceTransformer model...")
@@ -170,7 +169,7 @@ def main():
                 continue
 
             try:
-                df_compare_sheet = pd.read_excel('Excel_file/Compare.xlsx', sheet_name=sheet_name)
+                df_compare_sheet = pd.read_excel('Excel_file/Compare.xlsx', sheet_name=sheet_name, header=1) # skip first row for Compare.xlsx
             except:
                 print(f"Sheet '{sheet_name}' not found in Compare.xlsx. Skipping...")
                 continue
@@ -208,7 +207,7 @@ def main():
 
     # For each sheet's results, update PDF annotations
     # Assume we have a dictionary of DataFrames, one for each sheet, named all_results
-    # e.g. all_results = { "ODB": df_odb_results, "WLS": df_wls_results }
+    # e.g. all_results = { "ODB": df_odb_results, "OMI": df_OMI_results }
 
     for sheet_name, result_df in all_results.items():
         print(f"\n=== Updating PDFs for sheet: {sheet_name} ===")
@@ -229,7 +228,7 @@ def main():
             if not pdf_name.lower().endswith('.pdf'):
                 pdf_name += '.pdf'
 
-            # For ODB sheet -> ODB_document/<pdf_name>, WLS sheet -> WLS_document/<pdf_name>
+            # For ODB sheet -> ODB_document/<pdf_name>, OMI sheet -> OMI_document/<pdf_name>
             pdf_path = os.path.join(f"Documents/{sheet_name}_document", pdf_name)
 
             # Check if the file exists
@@ -263,11 +262,10 @@ def main():
             doc.save(out_path)
             doc.close()
             print(f"Saved updated PDF to: {out_path}")
-
-
-        # Print total time
-        end_time = time.time()
-        print(f"\nAll done! Total time: {end_time - start_time:.3f} seconds.")
+    
+    # Print total time
+    end_time = time.time()
+    print(f"\nAll done! Total time: {end_time - start_time:.3f} seconds.")
 
 
 # ---------------------------------------------------------------------

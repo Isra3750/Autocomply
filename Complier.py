@@ -34,7 +34,7 @@ def get_or_create_embeddings(df_main_sheet, model, sheet_name):
     return main_embeddings
 
 # ---------------------------------------------------------------------
-# Helper function: process one sheet (ODB or OMI)
+# Helper function: process one sheet (ODB or OMI, etc.)
 # ---------------------------------------------------------------------
 def process_sheet(sheet_name, df_main, df_compare, model, writer):
     """
@@ -169,7 +169,13 @@ def main():
                 continue
 
             try:
-                df_compare_sheet = pd.read_excel('Excel_file/Compare.xlsx', sheet_name=sheet_name, header=1, dtype={'Number': str}) # skip first row for Compare.xlsx
+                # skip first row for Compare.xlsx, read "Number" as string
+                df_compare_sheet = pd.read_excel(
+                    'Excel_file/Compare.xlsx', 
+                    sheet_name=sheet_name, 
+                    header=1, 
+                    dtype={'Number': str}
+                )
             except:
                 print(f"Sheet '{sheet_name}' not found in Compare.xlsx. Skipping...")
                 continue
@@ -183,7 +189,7 @@ def main():
             sheet_result_df = process_sheet(sheet_name, df_main_sheet, df_compare_sheet, model, writer)
             if sheet_result_df is not None and not sheet_result_df.empty:
                 all_results[sheet_name] = sheet_result_df
-            print(df_compare_sheet) # check each dataframe
+
         # Once we're done, the writer will save the Excel file
         print(f"\nAll sheets processed. Results saved to {output_excel}.\n")
 
@@ -206,11 +212,12 @@ def main():
         os.makedirs(output_dir)
 
     # For each sheet's results, update PDF annotations
-    # Assume we have a dictionary of DataFrames, one for each sheet, named all_results
-    # e.g. all_results = { "ODB": df_odb_results, "OMI": df_OMI_results }
-
     for sheet_name, result_df in all_results.items():
         print(f"\n=== Updating PDFs for sheet: {sheet_name} ===")
+
+        # 1) Create a subfolder in 'output' for this sheet, e.g. 'output/ODB_output'
+        sheet_output_dir = os.path.join(output_dir, f"{sheet_name}_output")
+        os.makedirs(sheet_output_dir, exist_ok=True)
 
         for idx, row in result_df.iterrows():
             # Skip rows where the similarity score is below 0.8
@@ -228,15 +235,12 @@ def main():
             if not pdf_name.lower().endswith('.pdf'):
                 pdf_name += '.pdf'
 
-            # For ODB sheet -> ODB_document/<pdf_name>, OMI sheet -> OMI_document/<pdf_name>
-            pdf_path = os.path.join(f"Documents/{sheet_name}_document", pdf_name)
-
-            # Check if the file exists
+            # e.g. Documents/ODB_document/<pdf_name>
+            pdf_path = os.path.join("Documents", f"{sheet_name}_document", pdf_name)
             if not os.path.exists(pdf_path):
                 print(f"Row {idx}: PDF not found: {pdf_path}. Skipping.")
                 continue
 
-            # Use the compare.xlsx number for the content of each annotation
             annotation_content = str(row['Number'])
 
             print(f"Opening PDF: {pdf_path} ...")
@@ -255,10 +259,9 @@ def main():
                             annot.set_info(content=annotation_content, title="Oracle")
                             annot.update()
 
-            # Save the updated PDF into the output folder
-            # Name it using {sheet}_{row['Number']}.pdf (adjust as needed)
-            out_pdf_name = f"{sheet_name}_{row['Number']}.pdf"
-            out_path = os.path.join("output", out_pdf_name)
+            # 2) Save the updated PDF in the sheet-specific subfolder
+            out_pdf_name = f"{sheet_name}_{annotation_content}.pdf"
+            out_path = os.path.join(sheet_output_dir, out_pdf_name)
             doc.save(out_path)
             doc.close()
             print(f"Saved updated PDF to: {out_path}")
@@ -273,3 +276,4 @@ def main():
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
     main()
+

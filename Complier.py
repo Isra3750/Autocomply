@@ -122,7 +122,7 @@ def process_sheet(sheet_name, df_main, df_compare, model, writer):
             'value': 0.95,
             'format': green_format
         })
-        
+
         # Set column widths
         worksheet.set_column('A:A', 8)
         worksheet.set_column('B:B', 50)
@@ -169,7 +169,7 @@ def main():
                 continue
 
             try:
-                df_compare_sheet = pd.read_excel('Excel_file/Compare.xlsx', sheet_name=sheet_name, header=1) # skip first row for Compare.xlsx
+                df_compare_sheet = pd.read_excel('Excel_file/Compare.xlsx', sheet_name=sheet_name, header=1, dtype={'Number': str}) # skip first row for Compare.xlsx
             except:
                 print(f"Sheet '{sheet_name}' not found in Compare.xlsx. Skipping...")
                 continue
@@ -183,7 +183,7 @@ def main():
             sheet_result_df = process_sheet(sheet_name, df_main_sheet, df_compare_sheet, model, writer)
             if sheet_result_df is not None and not sheet_result_df.empty:
                 all_results[sheet_name] = sheet_result_df
-
+            print(df_compare_sheet) # check each dataframe
         # Once we're done, the writer will save the Excel file
         print(f"\nAll sheets processed. Results saved to {output_excel}.\n")
 
@@ -236,8 +236,8 @@ def main():
                 print(f"Row {idx}: PDF not found: {pdf_path}. Skipping.")
                 continue
 
-            # Decide what text you want to put in the annotation (e.g. row['Matched Document Reference'] or row['Number'])
-            annotation_content = str(row['Number'])  # or row['Number'], etc.
+            # Use the compare.xlsx number for the content of each annotation
+            annotation_content = str(row['Number'])
 
             print(f"Opening PDF: {pdf_path} ...")
             try:

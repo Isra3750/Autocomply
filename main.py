@@ -1,6 +1,8 @@
 import os
-import subprocess # for creating new child process
-from flask import Flask, render_template, request, send_from_directory
+import subprocess
+from flask import Flask, render_template, request, send_from_directory, send_file
+import io
+import zipfile
 
 app = Flask(__name__)
 
@@ -52,6 +54,35 @@ def download_result():
         path="Result.xlsx", 
         as_attachment=True
     )
+
+# download Zip file of output folder
+@app.route('/download_output_zip')
+def download_output_zip():
+    output_folder = os.path.join(os.getcwd(), 'output')
+    if not os.path.exists(output_folder):
+        return "Output folder does not exist!"
+    
+    # Create an in-memory zip file
+    memory_file = io.BytesIO()
+    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+        # Walk through the output folder, add each file
+        for root, dirs, files in os.walk(output_folder):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Use a relative path so the zip doesn't have absolute directories
+                arcname = os.path.relpath(file_path, output_folder)
+                zf.write(file_path, arcname)
+    
+    memory_file.seek(0) # Important: go back to the start of the BytesIO
+
+    return send_file(
+        memory_file,
+        mimetype='application/zip',
+        download_name='output.zip',
+        as_attachment=True
+    )
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

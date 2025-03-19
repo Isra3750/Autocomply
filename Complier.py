@@ -147,7 +147,11 @@ def main():
     # Load the model
     print("Loading SentenceTransformer model...")
     with tqdm(total=1, desc="Loading Model") as pbar:
-        model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        model = SentenceTransformer(
+            "./onnx_model", 
+            backend="onnx", 
+            model_kwargs={"file_name": "model.onnx"}
+        )
         pbar.update(1)
     print("Model loaded!\n")
 

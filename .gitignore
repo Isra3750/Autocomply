@@ -13,3 +13,6 @@ Excel_file/
 # Remove the folder from the index -> git rm -r --cached output 
 # git rm -r --cached output
 output/
+
+# onnx file is larger than 100 MB
+onnx_model/
